@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyGenie Dashboard</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+    <!-- Floating Background -->
+    <div class="floating circle1"></div>
+    <div class="floating circle2"></div>
+    <div class="floating circle3"></div>
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo-section">
+            <img src="1.png" class="logo" alt="StudyGenie Logo">
+
+            <h2>StudyGenie</h2>
+
+            <p>AI Study Planner</p>
+        </div>
+
+        <nav>
+
+            <a href="#" class="active">Dashboard</a>
+
+            <a href="timetable.html">Timetable Creator</a>
+
+            <a href="pomodoro.html">Pomodoro Timer</a>
+
+            <a href="progress.html">Progress Tracker</a>
+
+            <a href="goals.html">Goal Setter</a>
+
+            <a href="todo.html">To-Do List</a>
+
+            <a href="studytips.html">Study Tips</a>
+
+            <a href="analysis.html">Analysis</a>
+
+        </nav>
+
+        <button class="logout-btn">
+            Logout
+        </button>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main-content">
+
+        <!-- HEADER -->
+
+        <div class="header">
+
+            <div class="typing-container">
+                <span id="typing"></span>
+                <span class="cursor">|</span>
+            </div>
+
+            <p class="subtitle">
+                Organize your learning journey with StudyGenie.
+            </p>
+
+        </div>
+
+        <!-- HERO SECTION -->
+
+        <section class="hero-card">
+
+            <h2>Welcome Back!</h2>
+
+            <p>
+                Create smart study plans, track progress,
+                manage goals and stay productive with AI-powered planning.
+            </p>
+
+            
+
+        </section>
+
+        <!-- QUICK ACTIONS -->
+
+        <h2 class="section-title">Quick Actions</h2>
+
+        <section class="cards">
+
+            <a href="timetable.html" class="card">
+
+                <div class="icon">
+                    <img src="11.png" alt="">
+                </div>
+
+                <h3>Timetable Creator</h3>
+
+                <p>Create personalized study schedules.</p>
+
+            </a>
+
+            <a href="pomodoro.html" class="card">
+
+                <div class="icon">
+                    <img src="10.png" alt="">
+                </div>
+
+                <h3>Pomodoro Timer</h3>
+
+                <p>Boost concentration and productivity.</p>
+
+            </a>
+
+            <a href="progress.html" class="card">
+
+                <div class="icon">
+                    <img src="5.png" alt="">
+                </div>
+
+                <h3>Progress Tracker</h3>
+
+                <p>Monitor your academic growth.</p>
+
+            </a>
+
+            <a href="subjectsandexams.html" class="card">
+
+                <div class="icon">
+                    <img src="7.png" alt="">
+                </div>
+
+                <h3>Subjects & Exams</h3>
+
+                <p>Manage your subjects and upcoming exams.</p>
+
+            </a>
+
+            <a href="todo.html" class="card">
+
+                <div class="icon">
+                    <img src="3.png" alt="">
+                </div>
+
+                <h3>To-Do List</h3>
+
+                <p>Manage tasks efficiently.</p>
+
+            </a>
+
+            <a href="studytips.html" class="card">
+
+                <div class="icon">
+                    <img src="4.png" alt="">
+                </div>
+
+                <h3>Study Tips</h3>
+
+                <p>Discover effective learning techniques.</p>
+
+            </a>
+
+            <a href="remainders.html" class="card">
+
+                <div class="icon">
+                    <img src="44.png" alt="">
+                </div>
+
+                <h3>Reminders</h3>
+
+                <p>Never miss an important deadline or exam.</p>
+
+            </a>
+             <a href="profile.html" class="card">
+
+                <div class="icon">
+                    <img src="12.png" alt="">
+                </div>
+
+                <h3>Profile Settings</h3>
+
+                <p>Manage your account and preferences.</p>
+
+            </a>
+
+            
+
+        </section>
+    <!-- Chatbot Icon -->
+<div class="chatbot-icon" id="chat-toggle">
+    <img src="22.png" alt="Chatbot">
+</div>
+
+<!-- Chatbot Window -->
+<div class="chatbot-container" id="chatbot">
+
+    <div class="chat-header">
+        <img src="1.png" class="chat-logo">
+
+        <div>
+            <h3>StudyGenie Assistant</h3>
+            <p>Your Smart Learning Companion</p>
+        </div>
+
+        <span id="close-chat">✖</span>
+    </div>
+
+    <div class="chat-body" id="chat-body">
+        <div class="message bot">
+            👋 Hello! I am StudyGenie Assistant.
+        </div>
+    </div>
+
+    <div class="chat-footer">
+        <input type="text" id="chat-input" placeholder="Ask me anything...">
+        <button id="send-btn">Send</button>
+    </div>
+
+</div>
+
+<script src="ai.js"></script>
+
+       
+
+        <!-- MOTIVATION -->
+
+        <section class="quote-card">
+
+            <h3>Daily Motivation</h3>
+
+            <p>
+                "Success is the sum of small efforts repeated day in and day out."
+            </p>
+
+        </section>
+
+    </main>
+
+    <!-- TYPING ANIMATION -->
+
+    <script>
+
+        const text =
+            "Welcome to StudyGenie";
+
+        let i = 0;
+
+        function typeWriter() {
+
+            if (i < text.length) {
+
+                document.getElementById("typing").innerHTML += text.charAt(i);
+
+                i++;
+
+                setTimeout(typeWriter, 80);
+
+            }
+
+        }
+
+        typeWriter();
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Add Subject Test</h2>
+
+<input id="subjectName" placeholder="Subject Name">
+<input id="difficulty" placeholder="Difficulty">
+
+<button onclick="addSubject()">Add</button>
+
+<script>
+async function addSubject() {
+
+    const subject = {
+        subjectName: document.getElementById("subjectName").value,
+        difficulty: document.getElementById("difficulty").value
+    };
+
+    const response = await fetch(
+        "http://localhost:7000/subjects",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(subject)
+        }
+    );
+
+    const result = await response.text();
+    alert(result);
+}
+</script>
+
+</body>
+</html>

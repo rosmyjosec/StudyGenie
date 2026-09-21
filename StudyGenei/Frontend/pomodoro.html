@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>StudyGenie Pomodoro Timer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Header -->
+
+  <header class="topbar">
+
+    <div class="logo-section">
+
+      <img src="1.png" alt="StudyGenie Logo" class="logo">
+
+      <div>
+        <h2>StudyGenie</h2>
+        <p>Smart Learning Assistant</p>
+      </div>
+
+    </div>
+
+    <a href="dashboard.html" class="dashboard-btn">
+      Dashboard
+    </a>
+
+  </header>
+
+  <!-- Timer -->
+
+  <div class="timer-container">
+
+    <h1>Pomodoro Timer</h1>
+
+    <div class="circle">
+
+      <svg>
+
+        <!-- Background Circle -->
+
+        <circle
+          class="bg-circle"
+          cx="120"
+          cy="120"
+          r="100">
+        </circle>
+
+        <!-- Progress Circle -->
+
+        <circle
+          id="progress"
+          cx="120"
+          cy="120"
+          r="100">
+        </circle>
+
+      </svg>
+
+      <div class="time" id="timer">
+        25:00
+      </div>
+
+    </div>
+
+    <div class="inputs">
+
+      <label>
+        Minutes:
+
+        <input
+          type="number"
+          id="customMinutes"
+          min="1"
+          max="120"
+          value="25">
+      </label>
+
+    </div>
+
+    <div class="buttons">
+
+      <button id="startBtn">
+        Start
+      </button>
+
+      <button id="pauseBtn">
+        Pause
+      </button>
+
+      <button id="resetBtn">
+        Reset
+      </button>
+
+    </div>
+
+  </div>
+
+  <script src="pomo.js"></script>
+
+</body>
+
+</html>

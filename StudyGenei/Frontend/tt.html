@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Study Planner</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #e0e0e0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 650px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+    .card {
+      background-color: #1e1e1e;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+    h1, h3 { font-size: 1.3rem; margin-top: 0; color: #ffffff; }
+    label { display: block; margin-top: 15px; font-weight: 500; color: #aaaaaa; }
+    
+    input, select {
+      width: 100%; padding: 10px; margin-top: 5px; border-radius: 6px;
+      border: 1px solid #333; background-color: #2a2a2a; color: #fff; box-sizing: border-box;
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    
+    button {
+      width: 100%; margin-top: 15px; padding: 12px; border: none; border-radius: 6px;
+      background-color: #3b82f6; color: white; font-weight: bold; cursor: pointer; font-size: 1rem;
+    }
+    button:hover { background-color: #2563eb; }
+    .btn-add { background-color: #10b981; margin-top: 10px; }
+    .btn-add:hover { background-color: #059669; }
+    .btn-secondary { background-color: #059669; }
+    .btn-secondary:hover { background-color: #047857; }
+    
+    .divider { border-bottom: 1px solid #333; margin: 25px 0; }
+    .ranking-item, .schedule-item, .added-subject-item { 
+      background-color: #252525; padding: 12px; border-radius: 8px; margin-bottom: 10px; 
+    }
+    .added-subject-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn-delete {
+      background-color: #ef4444;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: auto;
+      margin: 0;
+      font-size: 0.8rem;
+    }
+    
+    .ranking-title { font-weight: bold; color: #ffffff; }
+    .subtext { font-size: 0.85rem; color: #aaaaaa; }
+    .day-header { color: #60a5fa; margin-top: 20px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
+    .reasoning-box {
+      background-color: #1e293b; border-left: 4px solid #3b82f6;
+      padding: 12px; border-radius: 4px; font-size: 0.9rem; margin-bottom: 20px; color: #cbd5e1;
+    }
+    .hidden { display: none; }
+
+    /* Print/PDF Specific Styling */
+    @media print {
+      body { background-color: #ffffff; color: #000000; }
+      .card { box-shadow: none; padding: 0; }
+      button, label, input, select, .reasoning-box, .subject-input-section { display: none !important; }
+      .ranking-item, .schedule-item { border: 1px solid #ccc; background-color: #fff; color: #000; }
+      .subtext { color: #555; }
+      .day-header { color: #000; font-weight: bold; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card" id="printableArea">
+    <h1>🤖 AI STUDY PLANNER</h1>
+    
+    <!-- User Input Section for Adding Subjects -->
+    <div class="subject-input-section">
+      <h3>Add Your Subjects</h3>
+      
+      <label for="subName">Subject Name:</label>
+      <input type="text" id="subName" placeholder="e.g. Data Structures">
+
+      <div class="form-row">
+        <div style="flex: 1;">
+          <label for="subDays">Days Until Exam:</label>
+          <input type="number" id="subDays" placeholder="e.g. 5" min="1">
+        </div>
+        <div style="flex: 1;">
+          <label for="subDiff">Difficulty:</label>
+          <select id="subDiff">
+            <option value="High">High</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="Low">Low</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn-add" onclick="addSubject()">+ Add Subject</button>
+      
+      <div id="subjectList" style="margin-top: 15px;"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <label for="hours">Available Time (Hours/Day):</label>
+    <input type="number" id="hours" value="4" min="1" max="16">
+
+    <button id="generateBtn" onclick="generatePlan()">[ GENERATE SMART PLAN ]</button>
+
+    <div id="planResult" class="hidden">
+      <div class="divider"></div>
+
+      <div class="reasoning-box">
+        <strong>🤖 AI Priority Reasoning:</strong><br>
+        Subjects are ranked dynamically based on exam urgency (fewer days left) combined with subject difficulty to prioritize your most critical topics first.
+      </div>
+
+      <h3>Priority Ranking</h3>
+      <div id="rankingList"></div>
+
+      <div class="divider"></div>
+
+      <h3>7-Day Study Timetable</h3>
+      <div id="timetable"></div>
+
+      <button class="btn-secondary" onclick="downloadTimetable()">📥 Download / Save PDF</button>
+      <button onclick="generatePlan()" style="background-color: #4b5563;">🔄 Regenerate Plan</button>
+    </div>
+  </div>
+
+  <script>
+    const userId = localStorage.getItem("userId") || "123";
+    
+    // Default subject list
+    let userSubjects = [
+      { name: "Data Structures", examDays: 5, difficulty: "High" },
+      { name: "Java Programming", examDays: 9, difficulty: "Medium" },
+      { name: "Mathematics", examDays: 14, difficulty: "Medium" }
+    ];
+
+    // Render the initial subject list on load
+    window.onload = function() {
+      fetchSubjectsFromDB();
+      renderSubjectList();
+    };
+
+    // Add new subject manually
+    function addSubject() {
+      const nameInput = document.getElementById("subName");
+      const daysInput = document.getElementById("subDays");
+      const diffInput = document.getElementById("subDiff");
+
+      const name = nameInput.value.trim();
+      const examDays = parseInt(daysInput.value);
+      const difficulty = diffInput.value;
+
+      if (!name || isNaN(examDays) || examDays < 1) {
+        alert("Please enter a valid subject name and days left for the exam.");
+        return;
+      }
+
+      userSubjects.push({ name, examDays, difficulty });
+      
+      // Reset inputs
+      nameInput.value = "";
+      daysInput.value = "";
+      
+      renderSubjectList();
+    }
+
+    // Delete subject from the list
+    function removeSubject(index) {
+      userSubjects.splice(index, 1);
+      renderSubjectList();
+    }
+
+    // Show added subjects on screen
+    function renderSubjectList() {
+      const container = document.getElementById("subjectList");
+      container.innerHTML = "";
+
+      if (userSubjects.length === 0) {
+        container.innerHTML = "<p class='subtext'>No subjects added yet. Add one above!</p>";
+        return;
+      }
+
+      userSubjects.forEach((sub, index) => {
+        const item = document.createElement("div");
+        item.className = "added-subject-item";
+        item.innerHTML = `
+          <div>
+            <strong>${sub.name}</strong> 
+            <span class="subtext">(${sub.examDays} days left | ${sub.difficulty})</span>
+          </div>
+          <button class="btn-delete" onclick="removeSubject(${index})">Remove</button>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    // Fetch from backend database if available
+    async function fetchSubjectsFromDB() {
+      try {
+        const response = await fetch(`/api/subjects?userId=${userId}`);
+        if(response.ok) {
+          const dbSubjects = await response.json();
+          if (dbSubjects && dbSubjects.length > 0) {
+            userSubjects = dbSubjects;
+            renderSubjectList();
+          }
+        }
+      } catch (err) {
+        console.log("Using manual/local subjects list.");
+      }
+    }
+
+    function generatePlan() {
+      if (userSubjects.length === 0) {
+        alert("Please add at least one subject before generating a plan!");
+        return;
+      }
+
+      document.getElementById("planResult").classList.remove("hidden");
+
+      // Sort subjects by priority: Exam urgency first, then difficulty
+      const sortedSubjects = [...userSubjects].sort((a, b) => a.examDays - b.examDays);
+
+      // 1. Render Priority Ranking
+      const rankingContainer = document.getElementById("rankingList");
+      rankingContainer.innerHTML = "";
+
+      sortedSubjects.forEach((sub, index) => {
+        const item = document.createElement("div");
+        item.className = "ranking-item";
+        item.innerHTML = `
+          <div class="ranking-title">${index + 1}. ${sub.name} ${sub.difficulty === 'High' ? '🔥' : ''}</div>
+          <div class="subtext">Exam: ${sub.examDays} days left | Difficulty: ${sub.difficulty}</div>
+        `;
+        rankingContainer.appendChild(item);
+      });
+
+      // 2. Render 7-Day Schedule
+      const hoursPerDay = parseInt(document.getElementById("hours").value) || 4;
+      const timetableContainer = document.getElementById("timetable");
+      timetableContainer.innerHTML = "";
+      const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+      const generatedTasks = [];
+
+      days.forEach((day) => {
+        const dayTitle = document.createElement("div");
+        dayTitle.className = "day-header";
+        dayTitle.innerText = day;
+        timetableContainer.appendChild(dayTitle);
+
+        let currentHour = 9;
+        
+        for (let i = 0; i < Math.min(hoursPerDay, 3); i++) {
+          const sub = sortedSubjects[i % sortedSubjects.length];
+          const timeSlot = `${currentHour}:00 - ${currentHour + 1}:00`;
+          currentHour += 2;
+
+          const slot = document.createElement("div");
+          slot.className = "schedule-item";
+          slot.innerHTML = `
+            <div class="subtext">${timeSlot}</div>
+            <div>📖 ${sub.name}</div>
+          `;
+          timetableContainer.appendChild(slot);
+
+          generatedTasks.push({ userId, day, timeSlot, subject: sub.name });
+        }
+      });
+
+      saveTimetableToDB(generatedTasks);
+    }
+
+    async function saveTimetableToDB(tasks) {
+      try {
+        await fetch('/api/timetable/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, tasks })
+        });
+      } catch (e) {
+        console.log("Backend not connected yet.");
+      }
+    }
+
+    function downloadTimetable() {
+      window.print();
+    }
+  </script>
+</body>
+</html>

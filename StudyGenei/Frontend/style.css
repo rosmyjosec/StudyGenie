@@ -1,0 +1,158 @@
+.topbar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    padding: 15px 40px;
+
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(12px);
+
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+
+    z-index: 1000;
+}
+.logo{
+    width: 55px;
+    height: 55px;
+    object-fit: contain;
+    display: block;
+}
+
+.logo-section{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-section h2{
+    margin: 0;
+    color: #7b4ca0;
+}
+
+.logo-section p{
+    margin: 0;
+    font-size: 0.9rem;
+    color: #777;
+}
+
+.dashboard-btn{
+    margin-left: 40px;   /* keeps button near logo */
+    
+    background: linear-gradient(
+        135deg,
+        #8d5cc7,
+        #b084f5
+    );
+
+    color: white;
+    text-decoration: none;
+
+    padding: 12px 22px;
+    border-radius: 12px;
+
+    font-weight: 600;
+
+    transition: all .3s ease;
+}
+
+.dashboard-btn:hover{
+    transform: translateY(-2px);
+}
+
+body {
+  display: flex;
+  padding-top: 100px;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #1b003f; /* deep purple background */
+  font-family: 'Segoe UI', sans-serif;
+  color: white;
+}
+
+.timer-container {
+  text-align: center;
+}
+
+h1 {
+  font-size: 36px;
+  margin-bottom: 40px;
+}
+
+.circle {
+  position: relative;
+  width: 240px;
+  height: 240px;
+  margin: 0 auto 20px;
+}
+
+svg {
+  transform: rotate(-90deg); /* start from top */
+  width: 100%;
+  height: 100%;
+}
+
+circle {
+  fill: none;
+  stroke-width: 15;
+  r: 100;
+  cx: 120;
+  cy: 120;
+}
+
+.bg-circle {
+  stroke: rgba(255,255,255,0.2);
+}
+
+#progress {
+  stroke: #9b59b6;
+  stroke-dasharray: 628; /* 2 * PI * 100 */
+  stroke-dashoffset: 628;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear;
+  filter: drop-shadow(0 0 10px #9b59b6);
+}
+
+.time {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
+  font-weight: bold;
+}
+
+.inputs {
+  margin-bottom: 20px;
+}
+
+.inputs input {
+  width: 60px;
+  padding: 6px;
+  border-radius: 8px;
+  border: none;
+  text-align: center;
+}
+
+.buttons button {
+  background: #9b59b6;
+  border: none;
+  color: white;
+  padding: 12px 20px;
+  margin: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px #9b59b6;
+}
+
+.buttons button:hover {
+  transform: scale(1.05);
+  background: #8e44ad;
+}

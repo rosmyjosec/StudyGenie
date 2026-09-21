@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyGenie Sign Up</title>
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+
+    <div class="logo-container">
+        <img src="1.png" alt="StudyGenie Logo" class="logo">
+        <h2>StudyGenie</h2>
+    </div>
+
+    <div class="auth-container">
+        <div class="auth-card">
+
+            <h1>Create Account</h1>
+            <p>Start your smarter study journey today.</p>
+
+            <form id="signupForm">
+
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input
+                        id="fullName"
+                        type="text"
+                        placeholder="Enter Full Name"
+                        required>
+                </div>
+
+                <div class="input-group">
+                    <label>Email</label>
+                    <input
+                        id="email"
+                        type="email"
+                        placeholder="Enter Email"
+                        required>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <input
+                        id="password"
+                        type="password"
+                        placeholder="Create Password"
+                        required>
+                </div>
+
+                <div class="input-group">
+                    <label>Course</label>
+                    <input
+                        id="course"
+                        type="text"
+                        placeholder="BTech CSE">
+                </div>
+
+                <div class="input-group">
+                    <label>Semester</label>
+                    <select id="semester">
+                        <option>S1</option>
+                        <option>S2</option>
+                        <option selected>S3</option>
+                        <option>S4</option>
+                        <option>S5</option>
+                        <option>S6</option>
+                        <option>S7</option>
+                        <option>S8</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn">
+                    Create Account
+                </button>
+
+            </form>
+
+            <div class="switch-link">
+                Already have an account?
+                <a href="login.html">Login</a>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="signup.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyGenie Profile</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#f8f5ff,#ede6ff);
+min-height:100vh;
+padding:40px;
+color:#333;
+}
+
+.dashboard-btn{
+position:fixed;
+top:25px;
+left:25px;
+background:#7b4ca0;
+color:white;
+text-decoration:none;
+padding:12px 20px;
+border-radius:12px;
+font-weight:600;
+transition:.3s;
+z-index:100;
+}
+
+.dashboard-btn:hover{
+background:#9360bb;
+transform:translateY(-2px);
+}
+
+.profile-container{
+max-width:900px;
+margin:auto;
+}
+
+.profile-card{
+background:white;
+border-radius:30px;
+padding:40px;
+box-shadow:0 15px 40px rgba(123,76,160,.15);
+}
+
+.header{
+text-align:center;
+margin-bottom:35px;
+}
+
+.header h1{
+color:#7b4ca0;
+font-size:36px;
+}
+
+.header p{
+color:#777;
+margin-top:5px;
+}
+
+.profile-image-section{
+text-align:center;
+margin-bottom:35px;
+}
+
+.avatar{
+width:170px;
+height:170px;
+border-radius:50%;
+object-fit:cover;
+border:6px solid #e9dcff;
+box-shadow:0 10px 25px rgba(123,76,160,.15);
+}
+
+.upload-btn{
+margin-top:15px;
+}
+
+.upload-btn input{
+display:block;
+margin:auto;
+}
+
+.section{
+margin-bottom:25px;
+}
+
+.section-title{
+color:#7b4ca0;
+font-size:20px;
+margin-bottom:15px;
+font-weight:600;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+}
+
+input,
+textarea{
+width:100%;
+padding:14px;
+border:none;
+border-radius:15px;
+background:#f5efff;
+outline:none;
+font-size:15px;
+}
+
+textarea{
+height:120px;
+resize:none;
+}
+
+.buttons{
+display:flex;
+gap:15px;
+margin-top:25px;
+}
+
+button{
+flex:1;
+padding:15px;
+border:none;
+border-radius:15px;
+cursor:pointer;
+font-size:15px;
+font-weight:600;
+transition:.3s;
+}
+
+.save-btn{
+background:#7b4ca0;
+color:white;
+}
+
+.save-btn:hover{
+background:#9360bb;
+}
+
+.edit-btn{
+background:#ece2ff;
+color:#7b4ca0;
+}
+
+.edit-btn:hover{
+background:#dcc9ff;
+}
+
+@media(max-width:768px){
+
+.grid{
+grid-template-columns:1fr;
+}
+
+.buttons{
+flex-direction:column;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<a href="dashboard.html" class="dashboard-btn">
+← Dashboard
+</a>
+
+<div class="profile-container">
+
+<div class="profile-card">
+
+<div class="header">
+<h1>My Profile</h1>
+<p>Manage your StudyGenie account settings</p>
+</div>
+
+<div class="profile-image-section">
+
+<img
+id="profileImage"
+class="avatar"
+src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
+
+<div class="upload-btn">
+<input
+type="file"
+id="imageInput"
+accept="image/*">
+</div>
+
+</div>
+
+<div class="section">
+
+<div class="section-title">
+Personal Information
+</div>
+
+<div class="grid">
+
+<input
+type="text"
+id="fullName"
+placeholder="Full Name">
+
+<input
+type="email"
+id="email"
+placeholder="Email">
+
+</div>
+
+</div>
+
+<div class="section">
+
+<div class="section-title">
+Academic Information
+</div>
+
+<div class="grid">
+
+<input
+type="text"
+id="course"
+placeholder="Course">
+
+<input
+type="text"
+id="semester"
+placeholder="Semester">
+
+</div>
+
+</div>
+
+<div class="section">
+
+<div class="section-title">
+About Me
+</div>
+
+<textarea
+id="bio"
+placeholder="Tell us about yourself...">
+</textarea>
+
+</div>
+
+<div class="buttons">
+
+<button
+class="edit-btn"
+onclick="enableEditing()">
+✏ Edit Profile
+</button>
+
+<button
+class="save-btn"
+onclick="saveProfile()">
+Save Changes
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let imageData="";
+
+document.getElementById("imageInput")
+.addEventListener("change",function(){
+
+const file=this.files[0];
+
+if(!file) return;
+
+const reader=new FileReader();
+
+reader.onload=function(e){
+
+imageData=e.target.result;
+
+document.getElementById(
+"profileImage"
+).src=imageData;
+
+};
+
+reader.readAsDataURL(file);
+
+});
+
+function enableEditing(){
+
+document
+.querySelectorAll("input,textarea")
+.forEach(field=>{
+
+field.removeAttribute("readonly");
+
+});
+
+alert("Profile editing enabled");
+
+}
+
+async function saveProfile(){
+
+const profile={
+
+fullName:
+document.getElementById("fullName").value,
+
+email:
+document.getElementById("email").value,
+
+course:
+document.getElementById("course").value,
+
+semester:
+document.getElementById("semester").value,
+
+bio:
+document.getElementById("bio").value,
+
+imageUrl:imageData
+
+};
+
+const response=await fetch(
+"http://localhost:7000/profile",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify(profile)
+}
+);
+
+const msg=await response.text();
+
+alert(msg);
+
+}
+
+async function loadProfile(){
+
+try{
+
+const response=
+await fetch(
+"http://localhost:7000/profile"
+);
+
+const profile=
+await response.json();
+
+if(!profile) return;
+
+document.getElementById("fullName")
+.value=profile.fullName||"";
+
+document.getElementById("email")
+.value=profile.email||"";
+
+document.getElementById("course")
+.value=profile.course||"";
+
+document.getElementById("semester")
+.value=profile.semester||"";
+
+document.getElementById("bio")
+.value=profile.bio||"";
+
+if(profile.imageUrl){
+
+document.getElementById(
+"profileImage"
+).src=profile.imageUrl;
+
+imageData=profile.imageUrl;
+
+}
+
+}
+catch(err){
+
+console.log(err);
+
+}
+
+}
+
+loadProfile();
+
+</script>
+
+</body>
+</html>

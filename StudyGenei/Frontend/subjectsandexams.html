@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyGenie - Subjects & Exams</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#f8f5ff,#ede6ff);
+min-height:100vh;
+color:#2d1b4e;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 40px;
+background:white;
+box-shadow:0 4px 20px rgba(123,76,160,.12);
+}
+
+.logo-section{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.logo{
+width:55px;
+height:55px;
+}
+
+.logo-section h2{
+color:#7b4ca0;
+}
+
+.logo-section p{
+font-size:13px;
+color:#777;
+}
+
+.dashboard-btn{
+text-decoration:none;
+background:#7b4ca0;
+color:white;
+padding:12px 20px;
+border-radius:12px;
+}
+
+.container{
+width:90%;
+max-width:1200px;
+margin:40px auto;
+}
+
+.page-title{
+text-align:center;
+margin-bottom:30px;
+}
+
+.page-title h1{
+font-size:38px;
+color:#5f3b8c;
+}
+
+.page-title p{
+color:#777;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:30px;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:25px;
+box-shadow:0 10px 25px rgba(123,76,160,.12);
+}
+
+.card h2{
+margin-bottom:20px;
+color:#7b4ca0;
+}
+
+input,select{
+width:100%;
+padding:12px;
+margin-bottom:15px;
+border:none;
+border-radius:12px;
+background:#f4efff;
+}
+
+button{
+width:100%;
+padding:12px;
+border:none;
+border-radius:12px;
+background:#7b4ca0;
+color:white;
+cursor:pointer;
+font-size:15px;
+}
+
+button:hover{
+background:#9360bb;
+}
+
+.subject-item,
+.exam-item{
+background:#f8f5ff;
+padding:15px;
+border-radius:15px;
+margin-top:12px;
+}
+
+.delete-btn{
+margin-top:10px;
+background:#ff6b81;
+}
+
+.delete-btn:hover{
+background:#ff4f69;
+}
+
+.countdown{
+margin-top:8px;
+font-weight:600;
+color:#7b4ca0;
+}
+
+@media(max-width:900px){
+.grid{
+grid-template-columns:1fr;
+}
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+
+<div class="logo-section">
+<img src="1.png" class="logo">
+
+<div>
+<h2>StudyGenie</h2>
+<p>Smart Learning Assistant</p>
+</div>
+
+</div>
+
+<a href="dashboard.html" class="dashboard-btn">
+Dashboard
+</a>
+
+</header>
+
+<div class="container">
+
+<div class="page-title">
+<h1>Subjects & Exams</h1>
+<p>Manage your subjects and upcoming exams</p>
+</div>
+
+<div class="grid">
+
+<div class="card">
+
+<h2>Subjects</h2>
+
+<input
+type="text"
+id="subjectName"
+placeholder="Subject Name">
+
+<select id="difficulty">
+<option>High</option>
+<option selected>Medium</option>
+<option>Low</option>
+</select>
+
+<button onclick="addSubject()">
+Add Subject
+</button>
+
+<div id="subjectList"></div>
+
+</div>
+
+<div class="card">
+
+<h2>Exams</h2>
+
+<select id="examSubject"></select>
+
+<input
+type="date"
+id="examDate">
+
+<button onclick="addExam()">
+Add Exam
+</button>
+
+<div id="examList"></div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const API="http://localhost:7000";
+
+async function loadSubjects(){
+
+const response=
+await fetch(API+"/subjects");
+
+const subjects=
+await response.json();
+
+const list=
+document.getElementById("subjectList");
+
+list.innerHTML="";
+
+subjects.forEach(subject=>{
+
+list.innerHTML+=`
+
+<div class="subject-item">
+
+<strong>${subject.subjectName}</strong><br>
+Difficulty: ${subject.difficulty}
+
+<button
+class="delete-btn"
+onclick="deleteSubject('${subject.subjectName}')">
+
+Delete
+
+</button>
+
+</div>
+
+`;
+
+});
+
+updateSubjectDropdown(subjects);
+
+}
+
+async function addSubject(){
+
+const subjectName=
+document.getElementById("subjectName").value;
+
+const difficulty=
+document.getElementById("difficulty").value;
+
+if(subjectName===""){
+alert("Enter Subject Name");
+return;
+}
+
+await fetch(API+"/subjects",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+subjectName,
+difficulty
+})
+
+});
+
+document.getElementById("subjectName").value="";
+
+loadSubjects();
+
+}
+
+async function deleteSubject(subjectName){
+
+await fetch(
+
+API+"/subjects/"+encodeURIComponent(subjectName),
+
+{
+method:"DELETE"
+}
+
+);
+
+loadSubjects();
+
+}
+
+function updateSubjectDropdown(subjects){
+
+const dropdown=
+document.getElementById("examSubject");
+
+dropdown.innerHTML="";
+
+subjects.forEach(subject=>{
+
+dropdown.innerHTML+=`
+
+<option>
+
+${subject.subjectName}
+
+</option>
+
+`;
+
+});
+
+}
+
+async function loadExams(){
+
+const response=
+await fetch(API+"/exams");
+
+const exams=
+await response.json();
+
+const container=
+document.getElementById("examList");
+
+container.innerHTML="";
+
+exams.forEach(exam=>{
+
+const today=
+new Date();
+
+const examDate=
+new Date(exam.examDate);
+
+const days=
+Math.ceil(
+(examDate-today)/
+(1000*60*60*24)
+);
+
+container.innerHTML+=`
+
+<div class="exam-item">
+
+<strong>${exam.subjectName}</strong><br>
+
+Exam Date:
+${exam.examDate}
+
+<div class="countdown">
+
+${days>0
+? days+" days remaining"
+: "Exam Day Reached"}
+
+</div>
+
+<button
+class="delete-btn"
+onclick="deleteExam('${exam.subjectName}','${exam.examDate}')">
+
+Delete
+
+</button>
+
+</div>
+
+`;
+
+});
+
+}
+
+async function addExam(){
+
+const subjectName=
+document.getElementById("examSubject").value;
+
+const examDate=
+document.getElementById("examDate").value;
+
+if(examDate===""){
+alert("Select Exam Date");
+return;
+}
+
+await fetch(API+"/exams",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+subjectName,
+examDate
+})
+
+});
+
+document.getElementById("examDate").value="";
+
+loadExams();
+
+}
+
+async function deleteExam(subjectName,examDate){
+
+await fetch(
+
+API+"/exams/"
++encodeURIComponent(subjectName)
++"/"
++encodeURIComponent(examDate),
+
+{
+method:"DELETE"
+}
+
+);
+
+loadExams();
+
+}
+
+loadSubjects();
+loadExams();
+
+</script>
+
+</body>
+</html>

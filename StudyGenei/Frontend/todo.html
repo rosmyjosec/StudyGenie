@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyGenie To-Do List</title>
+
+<style>
+
+/* ===== GENERAL ===== */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:"Segoe UI",sans-serif;
+background:linear-gradient(
+135deg,
+#fdfcff,
+#f4efff,
+#ffffff
+);
+min-height:100vh;
+}
+
+/* ===== HEADER ===== */
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 40px;
+background:white;
+box-shadow:0 5px 20px rgba(0,0,0,.05);
+}
+
+.logo-section{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.logo{
+width:60px;
+height:60px;
+object-fit:contain;
+}
+
+.logo-section h2{
+color:#7b4ca0;
+}
+
+.logo-section p{
+color:#777;
+font-size:.9rem;
+}
+
+.dashboard-btn{
+text-decoration:none;
+background:#7b4ca0;
+color:white;
+padding:12px 22px;
+border-radius:12px;
+transition:.3s;
+}
+
+.dashboard-btn:hover{
+transform:translateY(-2px);
+}
+
+/* ===== MAIN CARD ===== */
+
+.todo-container{
+
+max-width:850px;
+margin:40px auto;
+
+background:white;
+padding:30px;
+
+border-radius:25px;
+
+box-shadow:
+0 15px 35px
+rgba(123,76,160,.15);
+
+animation:fadeIn .7s ease;
+}
+
+.todo-container h1{
+text-align:center;
+color:#7b4ca0;
+margin-bottom:10px;
+}
+
+.subtitle{
+text-align:center;
+color:#777;
+margin-bottom:30px;
+}
+
+/* ===== INPUT ===== */
+
+.input-section{
+display:flex;
+gap:10px;
+}
+
+.input-section input{
+
+flex:1;
+
+padding:14px;
+
+border-radius:12px;
+
+border:2px solid #e7dbff;
+
+outline:none;
+
+font-size:15px;
+}
+
+.input-section input:focus{
+border-color:#9d7dff;
+}
+
+.input-section button{
+
+background:linear-gradient(
+135deg,
+#7b4ca0,
+#b08dff
+);
+
+color:white;
+
+border:none;
+
+padding:14px 24px;
+
+border-radius:12px;
+
+cursor:pointer;
+
+transition:.3s;
+}
+
+.input-section button:hover{
+transform:translateY(-3px);
+}
+
+/* ===== PROGRESS ===== */
+
+.progress-card{
+margin-top:25px;
+margin-bottom:25px;
+}
+
+.progress-info{
+display:flex;
+justify-content:space-between;
+margin-bottom:10px;
+font-weight:600;
+color:#666;
+}
+
+.progress-bar{
+height:15px;
+background:#ececec;
+border-radius:20px;
+overflow:hidden;
+}
+
+#progressFill{
+
+height:100%;
+width:0%;
+
+background:linear-gradient(
+90deg,
+#7b4ca0,
+#c9a8ff
+);
+
+transition:.4s;
+}
+
+/* ===== TASKS ===== */
+
+#taskList{
+list-style:none;
+}
+
+.task-item{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+background:#faf8ff;
+
+padding:15px;
+
+margin-bottom:12px;
+
+border-radius:15px;
+
+animation:slideIn .4s;
+}
+
+.task-item.completed span{
+text-decoration:line-through;
+opacity:.6;
+}
+
+.task-buttons button{
+
+margin-left:8px;
+
+border:none;
+
+padding:8px 12px;
+
+border-radius:8px;
+
+cursor:pointer;
+
+color:white;
+}
+
+.complete-btn{
+background:#8f67e8;
+}
+
+.delete-btn{
+background:#ff6b81;
+}
+
+.complete-btn:hover,
+.delete-btn:hover{
+opacity:.9;
+}
+
+/* ===== ANIMATIONS ===== */
+
+@keyframes slideIn{
+
+from{
+opacity:0;
+transform:translateY(15px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
+}
+
+@keyframes fadeIn{
+
+from{
+opacity:0;
+}
+
+to{
+opacity:1;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+
+<div class="logo-section">
+
+<img src="1.png" alt="Logo" class="logo">
+
+<div>
+<h2>StudyGenie</h2>
+<p>Smart Learning Assistant</p>
+</div>
+
+</div>
+
+<a href="dashboard.html" class="dashboard-btn">
+Dashboard
+</a>
+
+</header>
+
+<div class="todo-container">
+
+<h1>To-Do List</h1>
+
+<p class="subtitle">
+Manage your daily study goals efficiently
+</p>
+
+<div class="input-section">
+
+<input
+type="text"
+id="taskInput"
+placeholder="Enter a task...">
+
+<button onclick="addTask()">
+Add Task
+</button>
+
+</div>
+
+<div class="progress-card">
+
+<div class="progress-info">
+
+<span id="completedTasks">
+0 Completed
+</span>
+
+<span id="totalTasks">
+0 Tasks
+</span>
+
+</div>
+
+<div class="progress-bar">
+<div id="progressFill"></div>
+</div>
+
+</div>
+
+<ul id="taskList"></ul>
+
+</div>
+
+<script>
+
+let tasks =
+JSON.parse(
+localStorage.getItem("tasks")
+) || [];
+
+renderTasks();
+
+function addTask(){
+
+const input =
+document.getElementById(
+"taskInput"
+);
+
+const taskText =
+input.value.trim();
+
+if(taskText===""){
+return;
+}
+
+tasks.push({
+text:taskText,
+completed:false
+});
+
+input.value="";
+
+saveTasks();
+renderTasks();
+}
+
+function toggleTask(index){
+
+tasks[index].completed =
+!tasks[index].completed;
+
+saveTasks();
+renderTasks();
+}
+
+function deleteTask(index){
+
+tasks.splice(index,1);
+
+saveTasks();
+renderTasks();
+}
+
+function saveTasks(){
+
+localStorage.setItem(
+"tasks",
+JSON.stringify(tasks)
+);
+
+}
+
+function renderTasks(){
+
+const taskList =
+document.getElementById(
+"taskList"
+);
+
+taskList.innerHTML="";
+
+let completed=0;
+
+tasks.forEach((task,index)=>{
+
+if(task.completed){
+completed++;
+}
+
+const li =
+document.createElement("li");
+
+li.className =
+task.completed
+? "task-item completed"
+: "task-item";
+
+li.innerHTML=`
+
+<span>${task.text}</span>
+
+<div class="task-buttons">
+
+<button
+class="complete-btn"
+onclick="toggleTask(${index})">
+
+Done
+
+</button>
+
+<button
+class="delete-btn"
+onclick="deleteTask(${index})">
+
+Delete
+
+</button>
+
+</div>
+
+`;
+
+taskList.appendChild(li);
+
+});
+
+document.getElementById(
+"completedTasks"
+).innerText =
+completed + " Completed";
+
+document.getElementById(
+"totalTasks"
+).innerText =
+tasks.length + " Tasks";
+
+let percent = 0;
+
+if(tasks.length > 0){
+
+percent =
+(completed /
+tasks.length) * 100;
+
+}
+
+document.getElementById(
+"progressFill"
+).style.width =
+percent + "%";
+}
+
+</script>
+
+</body>
+</html>

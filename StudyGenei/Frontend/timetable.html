@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Study Planner</title>
+  <style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:linear-gradient(135deg,#f8f5ff,#f3edff,#ffffff);
+    font-family:"Segoe UI",sans-serif;
+    color:#444;
+    max-width:950px;
+    margin:30px auto;
+    padding:20px;
+}
+
+.card{
+    background:#fff;
+    border-radius:24px;
+    padding:30px;
+    box-shadow:0 15px 40px rgba(123,76,160,0.15);
+    animation:fadeIn 0.8s ease;
+}
+
+h1{
+    text-align:center;
+    color:#7b4ca0;
+    margin-bottom:20px;
+    font-size:2rem;
+}
+
+h3{
+    color:#8d63c7;
+    margin-bottom:15px;
+}
+
+label{
+    display:block;
+    margin-top:15px;
+    color:#666;
+    font-weight:600;
+}
+
+input,
+select{
+    width:100%;
+    padding:12px;
+    margin-top:6px;
+    border-radius:12px;
+    border:2px solid #e6dbff;
+    background:#faf8ff;
+    color:#444;
+    transition:.3s;
+}
+
+input:focus,
+select:focus{
+    outline:none;
+    border-color:#a67de8;
+    box-shadow:0 0 15px rgba(166,125,232,.25);
+}
+
+.form-row{
+    display:flex;
+    gap:15px;
+}
+
+button{
+    width:100%;
+    margin-top:15px;
+    padding:14px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(
+        135deg,
+        #7b4ca0,
+        #b08dff
+    );
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    transform:translateY(-3px);
+    box-shadow:0 10px 25px rgba(123,76,160,.25);
+}
+
+.btn-add{
+    background:linear-gradient(
+        135deg,
+        #9d7dff,
+        #c7b1ff
+    );
+}
+
+.btn-secondary{
+    background:linear-gradient(
+        135deg,
+        #7b4ca0,
+        #9d7dff
+    );
+}
+
+.divider{
+    border-bottom:1px solid #ebe1ff;
+    margin:25px 0;
+}
+
+.added-subject-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:#faf7ff;
+    border:1px solid #ebe1ff;
+    border-radius:15px;
+    padding:14px;
+    margin-bottom:10px;
+    transition:.3s;
+}
+
+.added-subject-item:hover{
+    transform:translateX(5px);
+}
+
+.btn-delete{
+    background:#ff6b81;
+    width:auto;
+    padding:8px 14px;
+    margin:0;
+    border-radius:10px;
+}
+
+.ranking-item{
+    background:#faf7ff;
+    border-left:5px solid #9d7dff;
+    border-radius:12px;
+    padding:15px;
+    margin-bottom:12px;
+    transition:.3s;
+}
+
+.ranking-item:hover{
+    transform:scale(1.02);
+}
+
+.ranking-title{
+    font-weight:bold;
+    color:#7b4ca0;
+}
+
+.schedule-item{
+    background:#fff;
+    border:1px solid #ebe1ff;
+    border-radius:12px;
+    padding:14px;
+    margin-bottom:10px;
+    transition:.3s;
+}
+
+.schedule-item:hover{
+    box-shadow:0 8px 20px rgba(123,76,160,.12);
+}
+
+.day-header{
+    color:#7b4ca0;
+    font-size:1.1rem;
+    font-weight:700;
+    margin-top:25px;
+    margin-bottom:10px;
+}
+
+.reasoning-box{
+    background:#f6f1ff;
+    border-left:5px solid #9d7dff;
+    padding:15px;
+    border-radius:12px;
+    color:#555;
+}
+
+.subtext{
+    color:#777;
+    font-size:.9rem;
+}
+
+.hidden{
+    display:none;
+}
+
+#planResult{
+    animation:fadeIn .6s ease;
+}
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+@media(max-width:768px){
+
+    .form-row{
+        flex-direction:column;
+    }
+
+    .card{
+        padding:20px;
+    }
+}
+
+@media print{
+
+    body{
+        background:white;
+    }
+
+    button,
+    input,
+    select,
+    label,
+    .subject-input-section{
+        display:none !important;
+    }
+
+    .card{
+        box-shadow:none;
+    }
+}
+  </style>
+</head>
+<body>
+
+  <div class="card" id="printableArea">
+    <h1>STUDYGENEI AI PLANNER</h1>
+    
+    <!-- User Input Section for Adding Subjects -->
+    <div class="subject-input-section">
+      <h3>Add Your Subjects</h3>
+      
+      <label for="subName">Subject Name:</label>
+      <input type="text" id="subName" placeholder="e.g. Data Structures">
+
+      <div class="form-row">
+        <div style="flex: 1;">
+          <label for="subDays">Days Until Exam:</label>
+          <input type="number" id="subDays" placeholder="e.g. 5" min="1">
+        </div>
+        <div style="flex: 1;">
+          <label for="subDiff">Difficulty:</label>
+          <select id="subDiff">
+            <option value="High">High</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="Low">Low</option>
+          </select>
+        </div>
+      </div>
+      <label for="hours">Available Time (Hours/Day):</label>
+        <input type="number" id="hours" value="4" min="1" max="16">
+        <div class="form-row">
+
+  <div style="flex:1;">
+    <label for="startTime">Study Starts At</label>
+    <input type="time" id="startTime" value="16:00">
+  </div>
+
+    <div style="flex:1;">
+    <label for="endTime">Study Ends At</label>
+    <input type="time" id="endTime" value="22:00">
+    </div>
+    </div>
+      <button class="btn-add" onclick="addSubject()">+ Add Subject</button>
+      
+      <div id="subjectList" style="margin-top: 15px;"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <label for="hours">Available Time (Hours/Day):</label>
+    <input type="number" id="hours" value="4" min="1" max="16">
+
+    <button id="generateBtn" onclick="generatePlan()">GENERATE SMART PLAN</button>
+
+    <div id="planResult" class="hidden">
+      <div class="divider"></div>
+
+      <div class="reasoning-box">
+        <strong>AI Priority Reasoning:</strong><br>
+        Subjects are ranked dynamically based on exam urgency (fewer days left) combined with subject difficulty to prioritize your most critical topics first.
+      </div>
+
+      <h3>Priority Ranking</h3>
+      <div id="rankingList"></div>
+
+      <div class="divider"></div>
+
+      <h3>7-Day Study Timetable</h3>
+      <div id="timetable"></div>
+
+      <button class="btn-secondary" onclick="downloadTimetable()">Download / Save PDF</button>
+      <button onclick="generatePlan()" style="background-color: #4b5563;">Regenerate Plan</button>
+    </div>
+  </div>
+
+
+  <script>
+    const userId = localStorage.getItem("userId") || "123";
+    
+    // Default subject list
+    let userSubjects = [
+      { name: "Data Structures", examDays: 5, difficulty: "High" },
+      { name: "Java Programming", examDays: 9, difficulty: "Medium" },
+      { name: "Mathematics", examDays: 14, difficulty: "Medium" }
+    ];
+
+    // Render the initial subject list on load
+    window.onload = function() {
+      fetchSubjectsFromDB();
+      renderSubjectList();
+    };
+
+    // Add new subject manually
+    function addSubject() {
+      const nameInput = document.getElementById("subName");
+      const daysInput = document.getElementById("subDays");
+      const diffInput = document.getElementById("subDiff");
+
+      const name = nameInput.value.trim();
+      const examDays = parseInt(daysInput.value);
+      const difficulty = diffInput.value;
+
+      if (!name || isNaN(examDays) || examDays < 1) {
+        alert("Please enter a valid subject name and days left for the exam.");
+        return;
+      }
+
+      userSubjects.push({ name, examDays, difficulty });
+      
+      // Reset inputs
+      nameInput.value = "";
+      daysInput.value = "";
+      
+      renderSubjectList();
+    }
+
+    // Delete subject from the list
+    function removeSubject(index) {
+      userSubjects.splice(index, 1);
+      renderSubjectList();
+    }
+
+    // Show added subjects on screen
+    function renderSubjectList() {
+      const container = document.getElementById("subjectList");
+      container.innerHTML = "";
+
+      if (userSubjects.length === 0) {
+        container.innerHTML = "<p class='subtext'>No subjects added yet. Add one above!</p>";
+        return;
+      }
+
+      userSubjects.forEach((sub, index) => {
+        const item = document.createElement("div");
+        item.className = "added-subject-item";
+        item.innerHTML = `
+          <div>
+            <strong>${sub.name}</strong> 
+            <span class="subtext">(${sub.examDays} days left | ${sub.difficulty})</span>
+          </div>
+          <button class="btn-delete" onclick="removeSubject(${index})">Remove</button>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    // Fetch from backend database if available
+    async function fetchSubjectsFromDB() {
+      try {
+        const response = await fetch(`/api/subjects?userId=${userId}`);
+        if(response.ok) {
+          const dbSubjects = await response.json();
+          if (dbSubjects && dbSubjects.length > 0) {
+            userSubjects = dbSubjects;
+            renderSubjectList();
+          }
+        }
+      } catch (err) {
+        console.log("Using manual/local subjects list.");
+      }
+    }
+
+    function formatTime(hour) {
+
+    let suffix = hour >= 12 ? "PM" : "AM";
+
+    let displayHour = hour % 12;
+
+    if(displayHour === 0){
+        displayHour = 12;
+    }
+
+    return displayHour + ":00 " + suffix;
+}
+
+    function generatePlan() {
+      if (userSubjects.length === 0) {
+        alert("Please add at least one subject before generating a plan!");
+        return;
+      }
+
+      document.getElementById("planResult").classList.remove("hidden");
+
+      // Sort subjects by priority: Exam urgency first, then difficulty
+      const sortedSubjects = [...userSubjects].sort((a, b) => a.examDays - b.examDays);
+
+      // 1. Render Priority Ranking
+      const rankingContainer = document.getElementById("rankingList");
+      rankingContainer.innerHTML = "";
+
+      sortedSubjects.forEach((sub, index) => {
+        const item = document.createElement("div");
+        item.className = "ranking-item";
+        item.innerHTML = `
+          <div class="ranking-title">${index + 1}. ${sub.name} ${sub.difficulty === 'High' ? '🔥' : ''}</div>
+          <div class="subtext">Exam: ${sub.examDays} days left | Difficulty: ${sub.difficulty}</div>
+        `;
+        rankingContainer.appendChild(item);
+      });
+
+      // 2. Render 7-Day Schedule
+      const hoursPerDay = parseInt(document.getElementById("hours").value) || 4;
+      const timetableContainer = document.getElementById("timetable");
+      timetableContainer.innerHTML = "";
+      const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+      const generatedTasks = [];
+
+      days.forEach((day) => {
+        const dayTitle = document.createElement("div");
+        dayTitle.className = "day-header";
+        dayTitle.innerText = day;
+        timetableContainer.appendChild(dayTitle);
+
+        const startTime =
+parseInt(document.getElementById("startTime")
+.value.split(":")[0]);
+
+const endTime =
+parseInt(document.getElementById("endTime")
+.value.split(":")[0]);
+
+let currentHour = startTime;
+
+let index = 0;
+
+while(currentHour < endTime){
+
+    const sub =
+    sortedSubjects[index %
+    sortedSubjects.length];
+
+    const timeSlot =
+      formatTime(currentHour)
+      + " - " +
+      formatTime(currentHour + 1);
+
+    currentHour++;
+
+    index++;
+
+          const slot = document.createElement("div");
+          slot.className = "schedule-item";
+          slot.innerHTML = `
+            <div class="subtext">${timeSlot}</div>
+            <div>📖 ${sub.name}</div>
+          `;
+          timetableContainer.appendChild(slot);
+
+          generatedTasks.push({ userId, day, timeSlot, subject: sub.name });
+        }
+      });
+
+      saveTimetableToDB(generatedTasks);
+    }
+
+    async function saveTimetableToDB(tasks) {
+      try {
+        await fetch('/api/timetable/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, tasks })
+        });
+      } catch (e) {
+        console.log("Backend not connected yet.");
+      }
+    }
+
+    function downloadTimetable() {
+      window.print();
+    }
+  </script>
+</body>
+</html>
