@@ -316,10 +316,10 @@ The project can be extended with the following features:
 
 This project was developed collaboratively as part of an academic mini-project.
 
-- **ROSMY JOSE C** – [GitHub Username]
-- **MANNA MARIYA SHEFFY** – [GitHub Username]
-- **SANVYA SANDEEP** – [GitHub Username]
-- **SIVADARSAN A R** – [GitHub Username]
+- **ROSMY JOSE C** – rosmyjosec[https://github.com/rosmyjosec]
+- **MANNA MARIYA SHEFFY** – MannaMariya[https://github.com/MannaMariya]
+- **SANVYA SANDEEP** – 
+- **SIVADARSAN A R** – 
 
 ---
 
