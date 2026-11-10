@@ -323,21 +323,6 @@ This project was developed collaboratively as part of an academic mini-project.
 
 ---
 
-## 📸 Screenshots
-
-Screenshots of the application can be added here to demonstrate its interface and functionality.
-
-Suggested screenshots:
-- Login and Registration
-- Dashboard
-- Timetable Creator
-- Subjects & Exams
-- Pomodoro Timer
-- Analytics
-- Profile Settings
-
----
-
 ## 📄 License
 
 This project was developed for academic and educational purposes.
